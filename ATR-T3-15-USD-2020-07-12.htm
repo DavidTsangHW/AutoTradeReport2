@@ -1,0 +1,209 @@
+<html>
+<head>
+<title><%=rptheader%></title>
+</head>
+<style>
+i {
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+}
+.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+.left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+}
+.up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+table, th, td {
+   border: 1px solid black;
+}
+</style>
+<script>
+/*14 Feb 2018 
+For highlighting cell and text
+*/
+var sorted = 0;
+var hbgcolor = "#003366"
+var hfontcolor = "#FFFFFF"
+var dbgcolor = ""
+var dfontcolor = ""
+function colorCol(t,c) {
+	var table, rows;
+	table = document.getElementById("tbl" + t);
+	rows = table.getElementsByTagName("TR");
+	for (i = 1; i < (rows.length); i++) 
+	{
+		x = rows[i].getElementsByTagName("TD")[c];
+		if (x.bgColor == "")
+		{
+			x.bgColor= hbgcolor;
+			x.style.color = hfontcolor
+		}
+		else
+			
+		{
+			x.bgColor= dbgcolor;
+			x.style.color = dfontcolor		
+		}
+	}
+}
+function sumCol(t,c) {
+	var table, rows, tot;
+	table = document.getElementById("tbl" + t);
+	rows = table.getElementsByTagName("TR");
+	
+	tot = 0
+	
+	for (i = 1; i < (rows.length); i++) 
+	{
+		x = rows[i].getElementsByTagName("TD")[c];
+		
+		if (rows[i].bgColor == "" && x.bgColor == "")
+		{
+			tot = tot + 0;
+		}
+		else			
+		{
+			valx = x.innerHTML.toLowerCase();
+			valx = Number(valx);
+			tot = tot + valx;
+		}
+	}
+	
+	alert("Total " + tot);
+}
+function hideCol(t,c) {
+	var table, rows, tot;
+	table = document.getElementById("tbl" + t);
+	rows = table.getElementsByTagName("TR");
+	
+	x = rows[0].getElementsByTagName("TH")[c];
+	
+	x.style.display = "none";
+	
+	for (i = 1; i < (rows.length); i++) 
+	{
+		x = rows[i].getElementsByTagName("TD")[c];
+		
+		x.style.display = "none";
+	}
+	
+}
+function color(row) {
+        if (row.bgColor == ""){
+            row.bgColor= hbgcolor;
+			row.style.color = hfontcolor
+        }
+        else{
+			row.bgColor= dbgcolor;
+			row.style.color = dfontcolor		
+        }
+}
+function sortTable(t,c) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("tbl" + t);
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc"; 
+  
+  if(sorted != c)
+  {
+      rows = table.getElementsByTagName("TR");
+	  
+	  for (i = 1; i < (rows.length); i++) 
+	  {
+		      x = rows[i].getElementsByTagName("TD")[sorted];
+	  }
+  }
+  
+  sorted = c
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.getElementsByTagName("TR");
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[c];
+      y = rows[i + 1].getElementsByTagName("TD")[c];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+	  
+	  valx = x.innerHTML.toLowerCase()
+	  valy = y.innerHTML.toLowerCase()
+	  
+	  valx = valx.replace("%","")
+	  valy = valy.replace("%","")	  
+	  if (isNaN(valx) == false)
+	  {
+			valx = Number(valx)
+	  }
+	  if (isNaN(valy) == false)
+	  {
+			valy = Number(valy)
+	  }	  
+      if (dir == "asc") {
+        if (valx > valy) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (valx < valy) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++; 
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
+<body>
+<b><!--<%Body%>--><%=rptheader%><!--<%/Body%>--></b><br/>
+<table width='100%' border='1' id='tbl1'>
+<tr><th><h3 onclick='colorCol(1,0)'>NEW</h3><i class='arrow down' onclick='sortTable(1,0)'></i>&nbsp<h3 onclick='sumCol(1,0)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,0)'>[-]</h3></th><th><h3 onclick='colorCol(1,1)'>P.SYMBOL</h3><i class='arrow down' onclick='sortTable(1,1)'></i>&nbsp<h3 onclick='sumCol(1,1)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,1)'>[-]</h3></th><th><h3 onclick='colorCol(1,2)'>P.DATE</h3><i class='arrow down' onclick='sortTable(1,2)'></i>&nbsp<h3 onclick='sumCol(1,2)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,2)'>[-]</h3></th><th><h3 onclick='colorCol(1,3)'>CURRENCY</h3><i class='arrow down' onclick='sortTable(1,3)'></i>&nbsp<h3 onclick='sumCol(1,3)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,3)'>[-]</h3></th><th><h3 onclick='colorCol(1,4)'>P.PRICE</h3><i class='arrow down' onclick='sortTable(1,4)'></i>&nbsp<h3 onclick='sumCol(1,4)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,4)'>[-]</h3></th><th><h3 onclick='colorCol(1,5)'>EST.S.DATE</h3><i class='arrow down' onclick='sortTable(1,5)'></i>&nbsp<h3 onclick='sumCol(1,5)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,5)'>[-]</h3></th><th><h3 onclick='colorCol(1,6)'>EST.S.PRICE</h3><i class='arrow down' onclick='sortTable(1,6)'></i>&nbsp<h3 onclick='sumCol(1,6)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,6)'>[-]</h3></th><th><h3 onclick='colorCol(1,7)'>EST.PROFITPCT</h3><i class='arrow down' onclick='sortTable(1,7)'></i>&nbsp<h3 onclick='sumCol(1,7)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,7)'>[-]</h3></th><th><h3 onclick='colorCol(1,8)'>EST.PROFITPCT252D</h3><i class='arrow down' onclick='sortTable(1,8)'></i>&nbsp<h3 onclick='sumCol(1,8)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,8)'>[-]</h3></th><th><h3 onclick='colorCol(1,9)'>T.DATE</h3><i class='arrow down' onclick='sortTable(1,9)'></i>&nbsp<h3 onclick='sumCol(1,9)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,9)'>[-]</h3></th><th><h3 onclick='colorCol(1,10)'>T.PRICE</h3><i class='arrow down' onclick='sortTable(1,10)'></i>&nbsp<h3 onclick='sumCol(1,10)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,10)'>[-]</h3></th><th><h3 onclick='colorCol(1,11)'>STATUS</h3><i class='arrow down' onclick='sortTable(1,11)'></i>&nbsp<h3 onclick='sumCol(1,11)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,11)'>[-]</h3></th><th><h3 onclick='colorCol(1,12)'>PROFITPCT</h3><i class='arrow down' onclick='sortTable(1,12)'></i>&nbsp<h3 onclick='sumCol(1,12)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,12)'>[-]</h3></th><th><h3 onclick='colorCol(1,13)'>PROFITPCT252D</h3><i class='arrow down' onclick='sortTable(1,13)'></i>&nbsp<h3 onclick='sumCol(1,13)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,13)'>[-]</h3></th><th><h3 onclick='colorCol(1,14)'>DATEPCT</h3><i class='arrow down' onclick='sortTable(1,14)'></i>&nbsp<h3 onclick='sumCol(1,14)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,14)'>[-]</h3></th><th><h3 onclick='colorCol(1,15)'>PRICEPCT
+</h3><i class='arrow down' onclick='sortTable(1,15)'></i>&nbsp<h3 onclick='sumCol(1,15)'>&sum;</h3>&nbsp<h3 onclick='hideCol(1,15)'>[-]</h3></th></tr>
+<tr onclick='color(this)'><td title = '- [NEW]' align='center'>-</td><td title = '- [P.SYMBOL]' align='center'>PEP</td><td title = '- [P.DATE]' align='center'>2020-06-11</td><td title = '- [CURRENCY]' align='center'>USD</td><td title = '- [P.PRICE]' align='right'>127.84</td><td title = '- [EST.S.DATE]' align='center'>2021-06-11</td><td title = '- [EST.S.PRICE]' align='right'>126.99</td><td title = '- [EST.PROFITPCT]' align='right'>-0.66</td><td title = '- [EST.PROFITPCT252D]' align='right'>-0.0</td><td title = '- [T.DATE]' align='center'>2020-06-15</td><td title = '- [T.PRICE]' align='right'>126.99</td><td title = '- [STATUS]' align='center'>CLOSED</td><td title = '- [PROFITPCT]' align='right'>-0.66</td><td title = '- [PROFITPCT252D]' align='right'>-42.0</td><td title = '- [DATEPCT]' align='right'>1.0</td><td title = '- [PRICEPCT
+]' align='right'>100.0</td></tr>
+<tr onclick='color(this)'><td title = '- [NEW]' align='center'>-</td><td title = '- [P.SYMBOL]' align='center'>PX</td><td title = '- [P.DATE]' align='center'>2020-06-11</td><td title = '- [CURRENCY]' align='center'>USD</td><td title = '- [P.PRICE]' align='right'>0.18</td><td title = '- [EST.S.DATE]' align='center'>2021-06-11</td><td title = '- [EST.S.PRICE]' align='right'>0.16</td><td title = '- [EST.PROFITPCT]' align='right'>-11.11</td><td title = '- [EST.PROFITPCT252D]' align='right'>-8.0</td><td title = '- [T.DATE]' align='center'>2020-06-16</td><td title = '- [T.PRICE]' align='right'>0.16</td><td title = '- [STATUS]' align='center'>CLOSED</td><td title = '- [PROFITPCT]' align='right'>-11.11</td><td title = '- [PROFITPCT252D]' align='right'>-560.0</td><td title = '- [DATEPCT]' align='right'>1.0</td><td title = '- [PRICEPCT
+]' align='right'>100.0</td></tr>
+<tr onclick='color(this)'><td title = '- [NEW]' align='center'>-</td><td title = '- [P.SYMBOL]' align='center'>TSLA</td><td title = '- [P.DATE]' align='center'>2020-06-11</td><td title = '- [CURRENCY]' align='center'>USD</td><td title = '- [P.PRICE]' align='right'>972.84</td><td title = '- [EST.S.DATE]' align='center'>2021-06-11</td><td title = '- [EST.S.PRICE]' align='right'>954.05</td><td title = '- [EST.PROFITPCT]' align='right'>-1.93</td><td title = '- [EST.PROFITPCT252D]' align='right'>-1.0</td><td title = '- [T.DATE]' align='center'>2020-06-12</td><td title = '- [T.PRICE]' align='right'>954.05</td><td title = '- [STATUS]' align='center'>CLOSED</td><td title = '- [PROFITPCT]' align='right'>-1.93</td><td title = '- [PROFITPCT252D]' align='right'>-486.0</td><td title = '- [DATEPCT]' align='right'>0.0</td><td title = '- [PRICEPCT
+]' align='right'>100.0</td></tr>
+<tr onclick='color(this)'><td title = '- [NEW]' align='center'>-</td><td title = '- [P.SYMBOL]' align='center'>O</td><td title = '- [P.DATE]' align='center'>2020-06-11</td><td title = '- [CURRENCY]' align='center'>USD</td><td title = '- [P.PRICE]' align='right'>57.88</td><td title = '- [EST.S.DATE]' align='center'>2021-06-11</td><td title = '- [EST.S.PRICE]' align='right'>57.38</td><td title = '- [EST.PROFITPCT]' align='right'>-0.86</td><td title = '- [EST.PROFITPCT252D]' align='right'>-1.0</td><td title = '- [T.DATE]' align='center'>2020-07-09</td><td title = '- [T.PRICE]' align='right'>57.38</td><td title = '- [STATUS]' align='center'>CLOSED</td><td title = '- [PROFITPCT]' align='right'>-0.86</td><td title = '- [PROFITPCT252D]' align='right'>-8.0</td><td title = '- [DATEPCT]' align='right'>8.0</td><td title = '- [PRICEPCT
+]' align='right'>100.0</td></tr>
+<tr onclick='color(this)'><td title = '- [NEW]' align='center'>-</td><td title = '- [P.SYMBOL]' align='center'>O</td><td title = '- [P.DATE]' align='center'>2020-06-11</td><td title = '- [CURRENCY]' align='center'>USD</td><td title = '- [P.PRICE]' align='right'>57.88</td><td title = '- [EST.S.DATE]' align='center'>2021-06-11</td><td title = '- [EST.S.PRICE]' align='right'>57.09</td><td title = '- [EST.PROFITPCT]' align='right'>-1.36</td><td title = '- [EST.PROFITPCT252D]' align='right'>-1.0</td><td title = '- [T.DATE]' align='center'>2020-07-09</td><td title = '- [T.PRICE]' align='right'>57.09</td><td title = '- [STATUS]' align='center'>CLOSED</td><td title = '- [PROFITPCT]' align='right'>-1.36</td><td title = '- [PROFITPCT252D]' align='right'>-12.0</td><td title = '- [DATEPCT]' align='right'>8.0</td><td title = '- [PRICEPCT
+]' align='right'>100.0</td></tr>
+<tr onclick='color(this)'><td title = '- [NEW]' align='center'>-</td><td title = '- [P.SYMBOL]' align='center'>O</td><td title = '- [P.DATE]' align='center'>2020-06-11</td><td title = '- [CURRENCY]' align='center'>USD</td><td title = '- [P.PRICE]' align='right'>57.88</td><td title = '- [EST.S.DATE]' align='center'>2021-06-11</td><td title = '- [EST.S.PRICE]' align='right'>57.38</td><td title = '- [EST.PROFITPCT]' alignt
